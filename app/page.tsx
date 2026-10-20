@@ -1,3 +1,4 @@
+import { CheckIcon } from "lucide-react";
 import Image from "next/image";
 import { SiteFooter } from "@/components/copper/site-footer";
 import { SiteHeader } from "@/components/copper/site-header";
@@ -9,6 +10,7 @@ import {
   formatNotesHours,
   formatUsd,
   getPlans,
+  getPrivacySummary,
   getProducts,
 } from "@/lib/copper/catalog";
 
@@ -41,6 +43,7 @@ const lifestyleCopy: Record<
 export default function Home() {
   const products = getProducts();
   const plans = getPlans();
+  const privacy = getPrivacySummary();
   const freePlan = plans.find((p) => p.id === "free");
   const plusPlan = plans.find((p) => p.id === "copper-plus");
   const comparison = [freePlan, plusPlan].filter((p) => p !== undefined);
@@ -235,6 +238,36 @@ export default function Home() {
                 );
               })}
             </div>
+          </div>
+        </section>
+        <section
+          id="privacy"
+          data-testid="privacy-summary"
+          className="bg-accent text-accent-foreground scroll-mt-16 py-16 md:py-24"
+        >
+          <div className="mx-auto max-w-3xl px-4">
+            <h2 className="mb-3 text-3xl font-bold md:text-4xl">
+              How Copper handles your privacy
+            </h2>
+            <p className="mb-8 text-lg">
+              Our {privacy.policy} privacy policy, in plain language.
+            </p>
+            <ul className="bg-card text-card-foreground flex flex-col gap-4 rounded-xl p-6 md:p-8">
+              {privacy.points.map((point) => (
+                <li key={point} className="flex gap-3">
+                  <CheckIcon
+                    aria-hidden="true"
+                    className="text-accent mt-1 size-5 shrink-0"
+                  />
+                  <span>{point}</span>
+                </li>
+              ))}
+            </ul>
+            <p className="mt-6 font-semibold">
+              Copper does record requests after you say &quot;
+              {privacy.wakeWord}.&quot; The points above explain how they are
+              stored and how you stay in control.
+            </p>
           </div>
         </section>
       </main>
