@@ -1,8 +1,10 @@
 import Image from "next/image";
 import { SiteFooter } from "@/components/copper/site-footer";
 import { SiteHeader } from "@/components/copper/site-header";
+import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { getProducts } from "@/lib/copper/catalog";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { formatUsd, getProducts } from "@/lib/copper/catalog";
 
 export default function Home() {
   const products = getProducts();
@@ -47,6 +49,64 @@ export default function Home() {
                   className="-ml-6 h-auto w-2/5"
                 />
               )}
+            </div>
+          </div>
+        </section>
+        <section
+          id="products"
+          data-testid="products"
+          className="scroll-mt-16 py-16 md:py-24"
+        >
+          <div className="mx-auto max-w-5xl px-4">
+            <h2 className="mb-10 text-3xl font-bold md:text-4xl">
+              Meet the Copper family
+            </h2>
+            <div className="grid gap-6 md:grid-cols-2">
+              {products.map((product) => (
+                <Card
+                  key={product.id}
+                  data-testid="product-card"
+                  data-product={product.id}
+                >
+                  <div className="bg-secondary flex justify-center p-6">
+                    <Image
+                      src={product.cutout}
+                      alt={`${product.name} ${product.type}`}
+                      width={1254}
+                      height={1254}
+                      className="h-auto w-3/5"
+                    />
+                  </div>
+                  <CardHeader>
+                    <CardTitle className="text-2xl font-bold">
+                      {product.name}
+                    </CardTitle>
+                    <p className="text-muted-foreground">{product.type}</p>
+                    <p className="text-primary text-2xl font-bold">
+                      {formatUsd(product.priceUsd)}
+                    </p>
+                  </CardHeader>
+                  <CardContent className="flex flex-col gap-4">
+                    <ul className="flex flex-col gap-3">
+                      {product.features.map((feature) => (
+                        <li key={feature.name}>
+                          <span className="font-semibold">{feature.name}.</span>{" "}
+                          <span className="text-muted-foreground">
+                            {feature.description}
+                          </span>
+                        </li>
+                      ))}
+                    </ul>
+                    <div className="flex flex-wrap gap-2">
+                      {product.colors.map((color) => (
+                        <Badge key={color} variant="secondary">
+                          {color}
+                        </Badge>
+                      ))}
+                    </div>
+                  </CardContent>
+                </Card>
+              ))}
             </div>
           </div>
         </section>
