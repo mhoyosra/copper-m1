@@ -4,7 +4,13 @@ import { SiteHeader } from "@/components/copper/site-header";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { formatUsd, getProducts } from "@/lib/copper/catalog";
+import {
+  formatMemory,
+  formatNotesHours,
+  formatUsd,
+  getPlans,
+  getProducts,
+} from "@/lib/copper/catalog";
 
 // Size, alt text and caption for each lifestyle photo, keyed by its catalog path.
 const lifestyleCopy: Record<
@@ -34,6 +40,10 @@ const lifestyleCopy: Record<
 
 export default function Home() {
   const products = getProducts();
+  const plans = getPlans();
+  const freePlan = plans.find((p) => p.id === "free");
+  const plusPlan = plans.find((p) => p.id === "copper-plus");
+  const comparison = [freePlan, plusPlan].filter((p) => p !== undefined);
   const lifestyle = products.flatMap((product) =>
     product.lifestyle.map((src) => ({ src, ...lifestyleCopy[src] })),
   );
@@ -166,6 +176,64 @@ export default function Home() {
                   </figcaption>
                 </figure>
               ))}
+            </div>
+          </div>
+        </section>
+        <section
+          id="plus"
+          data-testid="plus-pricing"
+          className="scroll-mt-16 py-16 md:py-24"
+        >
+          <div className="mx-auto max-w-5xl px-4">
+            <h2 className="mb-10 text-3xl font-bold md:text-4xl">
+              Get more with Copper Plus
+            </h2>
+            <div className="grid gap-6 md:grid-cols-2">
+              {comparison.map((plan) => {
+                const isPlus = plan.id === "copper-plus";
+                return (
+                  <Card
+                    key={plan.id}
+                    className={isPlus ? "ring-primary ring-2" : undefined}
+                  >
+                    <CardHeader>
+                      <CardTitle className="flex items-center gap-3 text-2xl font-bold">
+                        {plan.name}
+                        {isPlus && <Badge>Best value</Badge>}
+                      </CardTitle>
+                      <p className="text-3xl font-bold">
+                        {formatUsd(plan.monthlyUsd)}
+                        <span className="text-muted-foreground text-base font-normal">
+                          /month
+                        </span>
+                      </p>
+                      <p className="text-muted-foreground">
+                        {formatUsd(plan.annualUsd)}/year
+                      </p>
+                    </CardHeader>
+                    <CardContent>
+                      <ul className="flex flex-col gap-3">
+                        <li>
+                          <span className="font-semibold">Memory kept:</span>{" "}
+                          {formatMemory(plan.memoryDays)}
+                        </li>
+                        <li>
+                          <span className="font-semibold">
+                            Notes recording:
+                          </span>{" "}
+                          {formatNotesHours(plan.notesHoursPerMonth)}
+                        </li>
+                        <li>
+                          <span className="font-semibold">
+                            Refined answers:
+                          </span>{" "}
+                          {plan.refinedAnswers ? "Included" : "Not included"}
+                        </li>
+                      </ul>
+                    </CardContent>
+                  </Card>
+                );
+              })}
             </div>
           </div>
         </section>
