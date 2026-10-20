@@ -6,8 +6,37 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { formatUsd, getProducts } from "@/lib/copper/catalog";
 
+// Size, alt text and caption for each lifestyle photo, keyed by its catalog path.
+const lifestyleCopy: Record<
+  string,
+  { width: number; height: number; alt: string; caption: string }
+> = {
+  "/assets/lifestyle/copper-home-desert-light.png": {
+    width: 1672,
+    height: 941,
+    alt: "Copper Home smart speaker on a stone counter beside a window with a desert sunset and mountains",
+    caption:
+      "Copper Home keeps the house running while the desert sun goes down.",
+  },
+  "/assets/lifestyle/copper-notes-stone-desk.png": {
+    width: 1672,
+    height: 941,
+    alt: "Copper Notes clip-on recorder standing on a stone counter in warm desert light",
+    caption: "Copper Notes sits on any desk, ready for the next meeting.",
+  },
+  "/assets/lifestyle/copper-notes-golden-hour.png": {
+    width: 1536,
+    height: 1024,
+    alt: "A man writing in a notebook with a Copper Notes recorder clipped to his shirt pocket",
+    caption: "Clip it on and keep writing: Copper Notes captures the rest.",
+  },
+};
+
 export default function Home() {
   const products = getProducts();
+  const lifestyle = products.flatMap((product) =>
+    product.lifestyle.map((src) => ({ src, ...lifestyleCopy[src] })),
+  );
   const home = products.find((p) => p.id === "copper-home");
   const notes = products.find((p) => p.id === "copper-notes");
 
@@ -106,6 +135,36 @@ export default function Home() {
                     </div>
                   </CardContent>
                 </Card>
+              ))}
+            </div>
+          </div>
+        </section>
+        <section
+          id="showcase"
+          data-testid="showcase"
+          className="bg-secondary scroll-mt-16 py-16 md:py-24"
+        >
+          <div className="mx-auto max-w-5xl px-4">
+            <h2 className="mb-10 text-3xl font-bold md:text-4xl">
+              Made for life in Arizona
+            </h2>
+            <div className="flex flex-col gap-12">
+              {lifestyle.map(({ src, width, height, alt, caption }, index) => (
+                <figure
+                  key={src}
+                  className="grid items-center gap-6 md:grid-cols-2 md:gap-10"
+                >
+                  <Image
+                    src={src}
+                    alt={alt}
+                    width={width}
+                    height={height}
+                    className={`h-auto w-full rounded-xl ${index % 2 === 1 ? "md:order-2" : ""}`}
+                  />
+                  <figcaption className="text-xl font-semibold md:text-2xl">
+                    {caption}
+                  </figcaption>
+                </figure>
               ))}
             </div>
           </div>
